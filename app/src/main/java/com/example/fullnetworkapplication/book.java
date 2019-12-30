@@ -17,7 +17,9 @@ import java.util.ArrayList;
 public class book extends AppCompatActivity implements LoaderManager.LoaderCallbacks<ArrayList<DataContainerModel>> {
 
 
-    private String BOOKS_URL_REQUEST;
+    private String BOOKS_URL_REQUEST = "https://www.googleapis.com/books/v1/volumes";
+    private Uri BaseUri;
+    Uri.Builder uriBuilder;
     private TemplateAdapter BooksAdapter;
 
     @Override
@@ -31,7 +33,13 @@ public class book extends AppCompatActivity implements LoaderManager.LoaderCallb
         if (Extras != null) {
             String searchKey = Extras.getString("Key");
             Log.e(book.class.getSimpleName(), searchKey);
-            BOOKS_URL_REQUEST = "https://www.googleapis.com/books/v1/volumes?q=" + searchKey + "&key=AIzaSyDxXZT1gUcFlTEaC95oysA3MHrZl7qmHss";
+            //BOOKS_URL_REQUEST = "https://www.googleapis.com/books/v1/volumes?q=" + searchKey + "&key=AIzaSyDxXZT1gUcFlTEaC95oysA3MHrZl7qmHss";
+            BaseUri = Uri.parse(BOOKS_URL_REQUEST);
+            uriBuilder = BaseUri.buildUpon();
+            uriBuilder.appendQueryParameter("key", "AIzaSyDxXZT1gUcFlTEaC95oysA3MHrZl7qmHss");
+            uriBuilder.appendQueryParameter("q", searchKey);
+            uriBuilder.appendQueryParameter("maxResults","40");
+            Log.e(book.class.getSimpleName(),uriBuilder.toString());
         }
         BookList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -50,7 +58,7 @@ public class book extends AppCompatActivity implements LoaderManager.LoaderCallb
 
     @Override
     public Loader<ArrayList<DataContainerModel>> onCreateLoader(int id, Bundle args) {
-        return new BooksLoader(this, BOOKS_URL_REQUEST);
+        return new BooksLoader(this, uriBuilder.toString());
     }
 
     @Override
